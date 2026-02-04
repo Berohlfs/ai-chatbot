@@ -17,27 +17,63 @@ export function Chat() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  function handleSend(content: string) {
+  async function handleSend(content: string) {
     const userMessage: Message = {
       id: crypto.randomUUID(),
       role: "user",
       content,
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    const assistantId = crypto.randomUUID();
+    const assistantMessage: Message = {
+      id: assistantId,
+      role: "assistant",
+      content: "",
+    };
+
+    setMessages((prev) => [...prev, userMessage, assistantMessage]);
     setIsLoading(true);
 
-    // Mock assistant response (to be replaced with SSE API call)
-    setTimeout(() => {
-      const assistantMessage: Message = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content:
-          "This is a placeholder response. Backend integration coming soon!",
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: content }),
+      });
+
+      if (!response.ok) {
+        const body = await response.text();
+        console.error("API error:", response.status, body);
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantId
+              ? { ...msg, content: msg.content + chunk }
+              : msg
+          )
+        );
+      }
+    } catch {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === assistantId
+            ? { ...msg, content: "Something went wrong. Please try again." }
+            : msg
+        )
+      );
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   }
 
   return (
