@@ -16,8 +16,11 @@ interface CurrentAudio {
 
 interface AudioContextValue {
   currentAudio: CurrentAudio | null;
+  currentTime: number;
+  duration: number;
   requestTTS: (messageId: string, text: string) => Promise<void>;
   togglePlayPause: () => void;
+  seek: (seconds: number) => void;
   discard: () => void;
 }
 
@@ -25,6 +28,8 @@ const AudioCtx = createContext<AudioContextValue | null>(null);
 
 export function AudioProvider({ children }: { children: React.ReactNode }) {
   const [currentAudio, setCurrentAudio] = useState<CurrentAudio | null>(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [generatedAudios, setGeneratedAudios] = useState<Map<string, string>>(
     () => new Map()
   );
@@ -41,6 +46,8 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   const discard = useCallback(() => {
     cleanup();
     setCurrentAudio(null);
+    setCurrentTime(0);
+    setDuration(0);
   }, [cleanup]);
 
   const playFromUrl = useCallback(
@@ -48,15 +55,24 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       const audio = new Audio(url);
       audioRef.current = audio;
 
+      audio.addEventListener("loadedmetadata", () => {
+        setDuration(audio.duration);
+      });
+
+      audio.addEventListener("timeupdate", () => {
+        setCurrentTime(audio.currentTime);
+      });
+
       audio.addEventListener("ended", () => {
-        cleanup();
-        setCurrentAudio(null);
+        setCurrentAudio((prev) =>
+          prev ? { ...prev, status: "paused" } : null
+        );
       });
 
       audio.play();
       setCurrentAudio({ status: "playing", messageId });
     },
-    [cleanup]
+    []
   );
 
   const requestTTS = useCallback(
@@ -112,9 +128,17 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     }
   }, [currentAudio]);
 
+  const seek = useCallback((seconds: number) => {
+    if (!audioRef.current) return;
+    audioRef.current.currentTime = Math.max(
+      0,
+      Math.min(audioRef.current.duration, audioRef.current.currentTime + seconds)
+    );
+  }, []);
+
   return (
     <AudioCtx.Provider
-      value={{ currentAudio, requestTTS, togglePlayPause, discard }}
+      value={{ currentAudio, currentTime, duration, requestTTS, togglePlayPause, seek, discard }}
     >
       {children}
     </AudioCtx.Provider>
