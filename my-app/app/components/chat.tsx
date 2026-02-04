@@ -6,6 +6,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatMessage } from "@/app/components/chat-message";
 import { ChatInput } from "@/app/components/chat-input";
 import { ChatWelcome } from "@/app/components/chat-welcome";
+import { AudioPlayer } from "@/app/components/audio-player";
+import { Toaster } from "@/components/ui/sonner";
 import type { Message } from "@/app/components/types";
 
 export function Chat() {
@@ -83,6 +85,8 @@ export function Chat() {
 
   return (
     <div className="flex h-dvh flex-col">
+      <AudioPlayer />
+      <Toaster />
       <header className="flex h-16 shrink-0 items-center border-b bg-background/80 backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-3xl items-center gap-3 px-4">
           <div className="relative">

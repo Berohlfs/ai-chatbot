@@ -1,7 +1,12 @@
+"use client";
+
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Bot, User } from "lucide-react";
+import { Bot, User, Volume2, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { useAudio } from "@/app/components/audio-context";
 import type { Message } from "@/app/components/types";
 
 interface ChatMessageProps {
@@ -10,6 +15,21 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === "user";
+  const { currentAudio, requestTTS } = useAudio();
+
+  function handleListen() {
+    if (currentAudio) {
+      toast.error(
+        "There is already an audio playing. Cancel it to listen to a new one."
+      );
+      return;
+    }
+    requestTTS(message.id, message.content);
+  }
+
+  const isGenerating =
+    currentAudio?.messageId === message.id &&
+    currentAudio.status === "generating";
 
   return (
     <div className={cn("flex w-full", isUser ? "justify-end" : "justify-start")}>
@@ -84,6 +104,22 @@ export function ChatMessage({ message }: ChatMessageProps) {
             </ReactMarkdown>
           )}
         </div>
+        {!isUser && (
+          <Button
+            variant="ghost"
+            size="xs"
+            className="text-muted-foreground"
+            onClick={handleListen}
+            disabled={isGenerating}
+          >
+            {isGenerating ? (
+              <Loader2 className="size-3 animate-spin" />
+            ) : (
+              <Volume2 className="size-3" />
+            )}
+            Listen
+          </Button>
+        )}
       </div>
     </div>
   );
