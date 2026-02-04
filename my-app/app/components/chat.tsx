@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Bot } from "lucide-react";
+import Image from "next/image";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatMessage } from "@/app/components/chat-message";
 import { ChatInput } from "@/app/components/chat-input";
@@ -78,10 +78,22 @@ export function Chat() {
 
   return (
     <div className="flex h-dvh flex-col">
-      <header className="flex h-12 shrink-0 items-center justify-center border-b bg-background/80 backdrop-blur-sm">
-        <div className="flex items-center gap-2">
-          <Bot className="size-4 text-muted-foreground" />
-          <span className="text-sm font-medium">AI Chatbot</span>
+      <header className="flex h-16 shrink-0 items-center border-b bg-background/80 backdrop-blur-sm">
+        <div className="mx-auto flex w-full max-w-3xl items-center gap-3 px-4">
+          <div className="relative">
+            <Image
+              src="https://avatars.githubusercontent.com/u/90404673?v=4"
+              alt="Bernardo Rohlfs"
+              width={36}
+              height={36}
+              className="rounded-full"
+            />
+            <span className="absolute bottom-0 right-0 size-2.5 rounded-full border-2 border-background bg-emerald-500" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold leading-tight">NBA Specialist Chatbot</span>
+            <span className="text-xs text-muted-foreground">Created by Bernardo Rohlfs</span>
+          </div>
         </div>
       </header>
 

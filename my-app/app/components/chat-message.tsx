@@ -21,7 +21,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
       >
         <span className="flex items-center gap-1.5 px-1 text-xs text-muted-foreground">
           {isUser ? <User className="size-3" /> : <Bot className="size-3" />}
-          {isUser ? "You" : "AI"}
+          {isUser ? "You" : "NBA Specialist"}
         </span>
         <div
           className={cn(

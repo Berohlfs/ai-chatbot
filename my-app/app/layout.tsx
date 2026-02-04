@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Chatbot",
-  description: "AI Chatbot using OpenAIs SDK",
+  title: "NBA Specialist",
+  description: "NBA Specialist chatbot by Bernardo Rohlfs",
 };
 
 export default function RootLayout({

@@ -8,10 +8,10 @@ export function ChatWelcome() {
       </div>
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-tight">
-          How can I help you today?
+          What do you want to know about the NBA?
         </h2>
         <p className="text-sm text-muted-foreground">
-          Send a message to start a conversation.
+          Ask me anything — players, stats, history, trades, and more.
         </p>
       </div>
     </div>
