@@ -31,6 +31,11 @@ export function Chat() {
       content: "",
     };
 
+    const allMessages = [...messages, userMessage].map((m) => ({
+      role: m.role,
+      content: m.content,
+    }));
+
     setMessages((prev) => [...prev, userMessage, assistantMessage]);
     setIsLoading(true);
 
@@ -38,7 +43,7 @@ export function Chat() {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: content }),
+        body: JSON.stringify({ messages: allMessages }),
       });
 
       if (!response.ok) {
