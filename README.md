@@ -8,6 +8,8 @@ A sleek, real-time AI chatbot that summarizes news articles and reads them aloud
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
 ![OpenAI](https://img.shields.io/badge/OpenAI-SDK-412991?logo=openai&logoColor=white)
 
+[Click here to access the demo!](https://news-summarizer.bernardorohlfs.com/)
+
 ---
 
 ## What It Does
